@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.web.server.SecurityWebFilterChain
 
-
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig {
@@ -32,12 +31,15 @@ class SecurityConfig {
 
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain? {
-        return http.authorizeExchange()
+        return http
+                .csrf().disable()
+                .httpBasic().disable()
+                .formLogin().disable()
+                .authorizeExchange()
                 .pathMatchers("/admin/**").hasRole("ADMIN")
                 .pathMatchers("/api/**").permitAll()
                 .anyExchange().authenticated()
-                .and().oauth2Login()
-                .and().formLogin(withDefaults())
+                .and().oauth2Login(withDefaults())
                 .build()
     }
 }
