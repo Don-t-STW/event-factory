@@ -4,34 +4,55 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.oauth2.core.user.OAuth2User
+import org.springframework.security.oauth2.core.oidc.OidcIdToken
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo
+import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority
 import java.util.*
 import kotlin.collections.HashMap
 
 @Table("users")
-abstract class OAuth2UserInfo() : OAuth2User {
+abstract class OAuth2UserInfo : OidcUser {
     @Id
-    internal var id: Long? = null
-    internal var name: String = "Unknown"
-    internal var provider: String = "Unknown"
+    protected var id: Long? = null
+    internal open var name: String = "Unknown"
+    protected var provider: String = "Unknown"
+    internal open var token: String = "Unknown"
 
     @Transient
-    internal var attributes: Map<String, Any> = HashMap()
+    internal open var attributes: Map<String, Any> = HashMap()
 
-    constructor(attributes: Map<String, Any>) : this() {
-        this.attributes = attributes
+    constructor() {}
+
+    protected constructor(attr: Map<String, Any>, token: String) {
+        this.attributes = attr
+        this.token = token
+        setAttributes()
     }
+
+    abstract fun setAttributes()
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return Collections.singleton(OAuth2UserAuthority(getAttributes()))
+    }
+
+    override fun getAttributes(): Map<String, Any> {
+        return this.attributes
+    }
+
+    override fun getUserInfo(): OidcUserInfo? {
+        return null
     }
 
     override fun getName(): String {
         return name
     }
 
-    override fun getAttributes(): Map<String, Any> {
-        return attributes
+    override fun getIdToken(): OidcIdToken? {
+        return null
+    }
+
+    override fun getClaims(): Map<String, Any> {
+        return this.getAttributes()
     }
 }

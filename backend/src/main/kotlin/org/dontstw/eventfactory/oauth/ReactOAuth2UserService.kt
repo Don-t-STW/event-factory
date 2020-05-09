@@ -20,11 +20,11 @@ class ReactOAuth2UserService : ReactiveOAuth2UserService<OAuth2UserRequest, OAut
     override fun loadUser(userRequest: OAuth2UserRequest?): Mono<OAuth2User> {
         val delegate = DefaultReactiveOAuth2UserService()
         val clientRegistrationId = userRequest!!.clientRegistration.registrationId
-
         val oAuth2User = delegate.loadUser(userRequest)
+        val token = userRequest.accessToken
 
         return oAuth2User.flatMap { e: OAuth2User ->
-            val oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(clientRegistrationId, e.attributes)
+            val oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(clientRegistrationId, e.attributes, token)
             oAuth2UserInfoRepository
                     .findByName(oAuth2UserInfo.name)
                     .switchIfEmpty(Mono.defer {

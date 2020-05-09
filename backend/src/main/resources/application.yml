@@ -4,16 +4,16 @@ spring:
       client:
         registration:
           github:
-            client-id:
-            client-secret:
+            client-id: e8ffc03ae53a35b19441
+            client-secret: 7604d4924b4640ccec1c2d8ec9ee12a19497cb29
           kakao:
             authorization-grant-type: authorization_code
             scope: profile
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             client-name: Kakao
             client-authentication-method: POST
-            client-id:
-            client-secret:
+            client-id: 4562f8f688875e5834a56130b91dafef
+            client-secret: J5uZMg7zyKOr9UvRQqgebziw0ZE8l3Li
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -24,3 +24,9 @@ spring:
     prefix: classpath:templates/
     suffix: .html
     mode: HTML5
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          r2dbc=DEBUG:
